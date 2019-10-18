@@ -1,0 +1,17 @@
+{
+  "name": "financial-status",
+  "version": "1.0.0",
+  "description": "financial status microservice",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^24.9.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
