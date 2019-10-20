@@ -34,4 +34,34 @@ describe('Financial Status Repository', () => {
         
         expect(result).toStrictEqual(mockStatus);
     });
+
+    test('When calling get with a CUIT that doesn\'t exist, it should throw an error', async () => {
+        const cuit = '29-23245438-8';
+        mariadb.createPool.mockImplementation(() => {
+            return {
+                query: jest.fn().mockImplementation(() => Promise.resolve([]))
+            };
+        });
+
+        const sut = new FinancialStatusRepository('', '', '');
+
+        const result = sut.get(cuit);
+        
+        expect(result).rejects.toThrowError(`The CUIT ${cuit} does not exist in the database`);
+    });
+
+        test('When calling get with a CUIT that doesn\'t exist, it should throw an error', async () => {
+        const cuit = '29-23245438-8';
+        mariadb.createPool.mockImplementation(() => {
+            return {
+                query: jest.fn().mockImplementation(() => Promise.resolve([]))
+            };
+        });
+
+        const sut = new FinancialStatusRepository('', '', '');
+
+        const result = sut.get(cuit);
+        
+        expect(result).rejects.toThrowError(`The CUIT ${cuit} does not exist in the database`);
+    });
 });
