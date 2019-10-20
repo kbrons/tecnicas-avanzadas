@@ -1,0 +1,1 @@
+CREATE OR REPLACE USER "financial_status_user" IDENTIFIED BY "fJ84Hfia*";
