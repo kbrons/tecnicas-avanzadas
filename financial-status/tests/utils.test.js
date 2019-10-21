@@ -34,16 +34,6 @@ describe('utils test - isMethod', () => {
     });
 });
 
-describe('utils test - isMethod', () => {
-    test('Should return true when the parameter is a function', () => {
-        expect(utils.isFunction(() => {})).toBe(true);
-    });
-
-    test('Should return false when the parameter is not a function', () => {
-        expect(utils.isFunction('')).toBe(false);
-    });
-});
-
 describe('utils test - isStringOrStringArray', () => {
     test('Should call isString and isArray', () => {
         jest.spyOn(utils, 'isString').mockImplementation(() => false);
