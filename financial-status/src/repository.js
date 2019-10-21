@@ -1,5 +1,6 @@
 const mariadb = require('mariadb');
 const FinancialStatus = require('./model/financialStatus');
+const utils = require('./utils');
 
 class FinancialStatusRepository {
     constructor({host, user, password, database, connectionLimit = 5}) {
@@ -7,14 +8,7 @@ class FinancialStatusRepository {
     }
 
     get (argument) {
-        if(!argument) {
-            return Promise.reject(Error('A parameter is required'));
-        }
-        else if (!Array.isArray(argument) && (typeof argument !== 'string')) {
-            return Promise.reject(Error('The parameter must be a string ir array of strings'));
-        }
-
-        return Array.isArray(argument) ? this._getSeveral(argument) : this._getSingle(argument);
+        return utils.callForStringOrArray({argument, stringCallback: parameter => this._getSingle(parameter), arrayCallback: parameter => this._getSeveral(parameter)});
     }
 
     async _getSeveral(cuits) {

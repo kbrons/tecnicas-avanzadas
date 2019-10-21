@@ -1,3 +1,5 @@
+const utils = require('./utils');
+
 const validCuitTypes = ["20", "23", "24", "27", "30", "33", "34"];
 const validationSequence = [2, 3, 4, 5, 6, 7];
 Array.prototype.reverseInPlace = function() {
@@ -51,17 +53,14 @@ class FinancialStatusService {
     }
 
     get(argument) {
-        if (!argument) {
-            return Promise.reject(Error('A parameter is required'));
-        }
-        else if (!Array.isArray(argument) && (typeof argument !== 'string')) {
-            return Promise.reject(Error('The parameter must be a string ir array of strings'));
-        }
-
-        return Array.isArray(argument) ? this._getSeveral(argument) : this._getSingle(argument);
+        return utils.callForStringOrArray({argument, stringCallback: parameter => this._getSingle(parameter), arrayCallback: parameter => this._getSeveral(parameter)});
     }
 
     async _getSingle(cuit) {
+
+    }
+
+    async _getSeveral(cuits) {
 
     }
 }
