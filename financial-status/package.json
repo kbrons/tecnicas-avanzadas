@@ -19,7 +19,8 @@
   "jest": {
     "coverageReporters": [
       "text",
-      "cobertura"
+      "cobertura",
+      "lcov"
     ]
   }
 }
