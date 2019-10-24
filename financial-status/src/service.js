@@ -56,12 +56,14 @@ class FinancialStatusService {
         return utils.callForStringOrArray({argument, stringCallback: parameter => this._getSingle(parameter), arrayCallback: parameter => this._getSeveral(parameter)});
     }
 
-    async _getSingle(cuit) {
-
+    _getSingle(cuit) {
+        this._validate(cuit);
+        return this._repository.get(cuit);
     }
 
-    async _getSeveral(cuits) {
-
+    _getSeveral(cuits) {
+        cuits.forEach(cuit => this._validate(cuit));
+        return this._repository.get(cuits);
     }
 }
 
