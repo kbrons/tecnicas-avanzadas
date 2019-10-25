@@ -25,7 +25,7 @@ class FinancialStatusController {
 
     _mapToJSON(financialStatus) {
         const { status, cuit } = financialStatus;
-        return JSON.stringify({status, cuit});
+        return JSON.stringify({cuit, status});
     }
 }
 
