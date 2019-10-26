@@ -84,6 +84,7 @@ class FinancialStatusService {
             } catch {
                 return true;
             }
+
         }).map(financialStatus => financialStatus.cuit);
 
         if (invalidCuits.length > 0) {

@@ -120,6 +120,7 @@ describe('Financial Status Service', () => {
             cuit,
             status: 2
         }];
+      
         const sut = new Service();
 
         expect(() => sut.addOrUpdate(cuits)).toThrowError(`The following CUITs are not valid: ${cuit}`);
@@ -129,6 +130,7 @@ describe('Financial Status Service', () => {
         jest.spyOn(Service.prototype, '_validate').mockImplementation(() => {});
 
         const cuits = [{cuit: "23-39916309-9", status: 2}];
+
         const mockResponse = 'mock-response';
 
         const repositoryMock = {
