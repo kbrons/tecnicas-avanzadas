@@ -71,6 +71,12 @@ class FinancialStatusService {
             throw new Error('The financial statuses to add or update are required');
         }
 
+        const statusesWithMissingInformation = financialStatuses.filter(financialStatus => !financialStatus || !financialStatus.cuit || !financialStatus.status);
+
+        if (statusesWithMissingInformation.length > 0) {
+            throw new Error('Some financial statuses have missing information');
+        }
+
         const invalidCuits = financialStatuses.filter(financialStatus => {
             try {
                 this._validate(financialStatus.cuit);
@@ -78,7 +84,7 @@ class FinancialStatusService {
             } catch {
                 return true;
             }
-        });
+        }).map(financialStatus => financialStatus.cuit);
 
         if (invalidCuits.length > 0) {
             throw new Error(`The following CUITs are not valid: ${invalidCuits.join(', ')}`);
