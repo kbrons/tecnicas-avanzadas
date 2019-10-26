@@ -43,7 +43,7 @@ describe('Financial Status Service', () => {
 
     it('When calling get, it should call callToStringOrArray with the right parameters', () => {
         jest.spyOn(utils, 'callForStringOrArray').mockImplementation(() => {});
-        const cuit = "23-39916309-5";
+        const cuit = "23-39916309-9";
 
         const sut = new Service();
 
@@ -55,7 +55,7 @@ describe('Financial Status Service', () => {
     it('When calling with a single CUIT, it should validate it and call the repository', async () => {
         jest.spyOn(Service.prototype, '_validate').mockImplementation(() => {});
 
-        const cuit = "23-39916309-5";
+        const cuit = "23-39916309-9";
         const mockResponse = {cuit, status: 1};
 
         const repositoryMock = {
@@ -74,7 +74,7 @@ describe('Financial Status Service', () => {
     it('When calling with an array of CUITs, it should validate it and call the repository', async () => {
         jest.spyOn(Service.prototype, '_validate').mockImplementation(() => {});
 
-        const cuits = ["23-39916309-5"];
+        const cuits = ["23-39916309-9"];
         const mockResponse = [{cuit: cuits[0], status: 1}];
 
         const repositoryMock = {
@@ -88,5 +88,45 @@ describe('Financial Status Service', () => {
         expect(result).toEqual(mockResponse);
         expect(sut._validate).toHaveBeenCalledWith(cuits[0]);
         expect(repositoryMock.get).toHaveBeenCalledWith(cuits);
+    });
+
+    it('When calling addOrUpdate without parameters, it should throw an error ', () => {
+        const sut = new Service();
+
+        expect(() => sut.addOrUpdate()).toThrowError('The financial statuses to add or update are required');
+    });
+
+    it('When calling addOrUpdate without an array, it should throw an error ', () => {
+        const sut = new Service();
+
+        expect(() => sut.addOrUpdate('test-value')).toThrowError('The financial statuses to add or update are required');
+    });
+
+    it('When calling addOrUpdate with an invalid CUIT, it should throw an error ', () => {
+        jest.spyOn(Service.prototype, '_validate').mockImplementation(() => {throw new Error()});
+        const cuit = "23-39916309-5";
+        const cuits = [cuit];
+        const sut = new Service();
+
+        expect(() => sut.addOrUpdate(cuits)).toThrowError(`The following CUITs are not valid: ${cuit}`);
+    });
+
+    it('When calling addOrUpdate with a valid array of CUITs, it should call the repository', async () => {
+        jest.spyOn(Service.prototype, '_validate').mockImplementation(() => {});
+
+        const cuits = [{cuit: "23-39916309-9"}];
+        const mockResponse = 'mock-response';
+
+        const repositoryMock = {
+            addOrUpdate: jest.fn().mockResolvedValue(mockResponse)
+        };
+
+        const sut = new Service(repositoryMock);
+
+        const result = await sut.addOrUpdate(cuits);
+
+        expect(result).toEqual(mockResponse);
+        expect(sut._validate).toHaveBeenCalledWith(cuits[0].cuit);
+        expect(repositoryMock.addOrUpdate).toHaveBeenCalledWith(cuits);
     });
 });

@@ -65,6 +65,27 @@ class FinancialStatusService {
         cuits.forEach(cuit => this._validate(cuit));
         return this._repository.get(cuits);
     }
+
+    addOrUpdate(financialStatuses) {
+        if (!financialStatuses || !Array.isArray(financialStatuses)) {
+            throw new Error('The financial statuses to add or update are required');
+        }
+
+        const invalidCuits = financialStatuses.filter(financialStatus => {
+            try {
+                this._validate(financialStatus.cuit);
+                return false;
+            } catch {
+                return true;
+            }
+        });
+
+        if (invalidCuits.length > 0) {
+            throw new Error(`The following CUITs are not valid: ${invalidCuits.join()}`);
+        }
+
+        return this._repository.addOrUpdate(financialStatuses);
+    } 
 }
 
 module.exports = FinancialStatusService;
