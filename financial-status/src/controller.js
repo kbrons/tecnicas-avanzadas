@@ -5,6 +5,18 @@ class FinancialStatusController {
         this._service = service;
     }
 
+    addOrUpdate({financialStatuses, key}) {
+        if (!key) {
+            throw new Error('An API key is required');
+        }
+
+        if (!financialStatuses || !Array.isArray(financialStatuses)) {
+            throw new Error('An array of financial statuses is required');
+        }
+
+        return this._service.addOrUpdate(financialStatuses);
+    }
+
     get({parameter, key}) {
         if (!key) {
             throw new Error('An API key is required');
