@@ -27,7 +27,6 @@ describe('Financial Status Controller', () => {
     it('When calling with a single CUIT, it should call the service and return the result as JSON', async () => {
         const cuit = "23-39916309-5";
         const mockServiceResponse = {cuit, status: 5};
-        const mockKey = 'MockAPIKey';
 
         const mockService = {
             get: jest.fn().mockResolvedValue(mockServiceResponse)
@@ -45,7 +44,6 @@ describe('Financial Status Controller', () => {
         const cuit = "23-39916309-5";
         const cuits = [cuit];
         const mockServiceResponse = [{cuit, status: 5}];
-        const mockKey = 'MockAPIKey';
 
         const mockService = {
             get: jest.fn().mockResolvedValue(mockServiceResponse)
