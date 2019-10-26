@@ -6,10 +6,16 @@ describe('Financial Status Controller', () => {
         jest.restoreAllMocks();
     });
 
-    it('When it doesn\'t receive a key, it should throw an error', () => {
+    it('When calling get and it doesn\'t receive a key, it should throw an error', () => {
         const sut = new Controller();
 
         expect(() => sut.get({})).toThrowError('An API key is required');
+    });
+
+    it('When calling addOrUpdate and it doesn\'t receive a key, it should throw an error', () => {
+        const sut = new Controller();
+
+        expect(() => sut.addOrUpdate({})).toThrowError('An API key is required');
     });
 
     it('When calling get, it should call callToStringOrArray with the right parameters', () => {
@@ -57,5 +63,31 @@ describe('Financial Status Controller', () => {
 
         expect(mockService.get).toHaveBeenCalledWith(cuits);
         expect(result).toEqual(JSON.stringify(mockServiceResponse));
+    });
+
+    it('When calling addOrUpdate without an array, it should throw an error', () => {
+        const cuit = "23-39916309-5";
+        const mockKey = 'MockAPIKey';
+
+        const sut = new Controller();
+
+        expect(() => sut.addOrUpdate({financialStatuses: cuit, key: mockKey})).toThrowError('An array of financial statuses is required');
+    });
+
+    it('When calling with a single CUIT, it should call the service and return the result as JSON', async () => {
+        const financialStatuses = [{cuit: "23-39916309-5", status: 2}];
+        const mockServiceResponse = 'mockResponse';
+        const mockKey = 'MockAPIKey';
+
+        const mockService = {
+            addOrUpdate: jest.fn().mockResolvedValue(mockServiceResponse)
+        };
+
+        const sut = new Controller(mockService);
+
+        const result = await sut.addOrUpdate({financialStatuses, key: mockKey});
+
+        expect(mockService.addOrUpdate).toHaveBeenCalledWith(financialStatuses);
+        expect(result).toEqual(mockServiceResponse);
     });
 });
