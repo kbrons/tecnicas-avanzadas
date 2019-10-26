@@ -1,5 +1,5 @@
 CREATE OR REPLACE TABLE `FINANCIAL_STATUS_DB`.`FINANCIAL_STATUS` (
-  `cuit` VARCHAR(13) NOT NULL,
+  `cuit` VARCHAR(14) NOT NULL,
   `financial_status` TINYINT(1) NOT NULL,
   `dni` VARCHAR(8),
   `full_name` VARCHAR(50),
