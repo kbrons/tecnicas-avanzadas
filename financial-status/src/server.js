@@ -24,6 +24,8 @@ const controller = new FinancialStatusController(service);
 
 const server = express();
 
+server.use(express.json());
+
 server.get('/:cuit', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
@@ -34,11 +36,23 @@ server.get('/:cuit', asyncHandler(async (request, response, next) => {
     }
 }));
 
-server.post('/', asyncHandler(async (request, response) => {
+server.post('/', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
         const cuits = request.body;
+        console.log(`Request body: ${cuits}`);
         response.status(200).send(await controller.get({ key, parameter: cuits }));
+    } catch (error) {
+        next(error);
+    }
+}));
+
+server.put('/', asyncHandler(async (request, response, next) => {
+    try {
+        const key = request.header('Authorization');
+        const financialStatuses = request.body;
+        await controller.addOrUpdate({ key, financialStatuses });
+        response.status(200).end();
     } catch (error) {
         next(error);
     }
