@@ -4,8 +4,8 @@ const utils = require('./utils');
 const tableName = `FINANCIAL_STATUS`;
 
 class FinancialStatusRepository {
-    constructor({host, user, password, database, connectionLimit = 5}) {
-        this._connectionPool = mariadb.createPool({host, user, password, database, connectionLimit});
+    constructor({host, port, user, password, database, connectionLimit = 5}) {
+        this._connectionPool = mariadb.createPool({host, port, user, password, database, connectionLimit});
     }
 
     get (argument) {

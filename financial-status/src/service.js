@@ -81,7 +81,7 @@ class FinancialStatusService {
         });
 
         if (invalidCuits.length > 0) {
-            throw new Error(`The following CUITs are not valid: ${invalidCuits.join()}`);
+            throw new Error(`The following CUITs are not valid: ${invalidCuits.join(', ')}`);
         }
 
         return this._repository.addOrUpdate(financialStatuses);

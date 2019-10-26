@@ -4,16 +4,21 @@
   "description": "financial status microservice",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "start": "node ./src/server.js",
+    "start-dev": "cross-env DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=FINANCIAL_STATUS_DB node ./src/server.js",
+    "debug-dev": "cross-env DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=FINANCIAL_STATUS_DB node --inspect ./src/server.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^24.0.19",
+    "cross-env": "^6.0.3",
     "jest": "^24.9.0"
   },
   "dependencies": {
     "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
     "mariadb": "^2.1.2"
   },
   "jest": {
