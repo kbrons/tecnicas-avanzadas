@@ -4,7 +4,7 @@
   "description": "tap",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --config ../jest.config.json"
+    "test": "jest --coverage --config ./jest.config.json"
   },
   "author": "",
   "license": "ISC",
