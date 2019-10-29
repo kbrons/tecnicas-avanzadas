@@ -1,10 +1,10 @@
 {
-  "name": "financial-status",
+  "name": "account",
   "version": "1.0.0",
-  "description": "financial status microservice",
+  "description": "account microservice",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --config ../jest.config.json --testPathPattern financial-status/tests/*",
+    "test": "jest --coverage --config ../jest.config.json --testPathPattern account/tests/*",
     "start": "node ./src/server.js",
     "start-dev": "cross-env DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=FINANCIAL_STATUS_DB node ./src/server.js",
     "debug-dev": "cross-env DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=FINANCIAL_STATUS_DB node --inspect ./src/server.js"

@@ -1,0 +1,7 @@
+{
+    "coverageReporters": [
+        "text",
+        "cobertura",
+        "lcov"
+      ]
+}
