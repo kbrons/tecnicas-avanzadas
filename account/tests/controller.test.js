@@ -1,91 +1,125 @@
 const Controller = require('../src/controller');
-const utils = require('../src/utils');
+const Account = require('../src/model/account');
 
-describe('Financial Status Controller', () => {
+describe('Account Controller', () => {
     afterEach(() => {
         jest.restoreAllMocks();
     });
 
-    it('When calling get and it doesn\'t receive a key, it should throw an error', () => {
+    it('When calling mapToJSON with an account, it should return its JSON representation', () => {
+        const mockAccount = {
+            key: 'mockNewKey',
+            name: 'mockName',
+            isAdmin: false
+        };
+
+        const expectedResult = `{\"key\":\"${mockAccount.key}\",\"name\":\"${mockAccount.name}\",\"isAdmin\":${mockAccount.isAdmin}}`;
+        
         const sut = new Controller();
 
-        expect(() => sut.get({})).toThrowError('An API key is required');
+        const result = sut._mapToJSON(new Account(mockAccount));
+
+        expect(result).toEqual(expectedResult);
     });
 
-    it('When calling addOrUpdate and it doesn\'t receive a key, it should throw an error', () => {
+    it('When calling validate with a key, it should return', () => {
+        const mockKey = 'mockKey';
         const sut = new Controller();
 
-        expect(() => sut.addOrUpdate({})).toThrowError('An API key is required');
+        expect(sut._validate(mockKey)).toBeUndefined();
     });
 
-    it('When calling get, it should call callToStringOrArray with the right parameters', () => {
-        jest.spyOn(utils, 'callForStringOrArray').mockImplementation(() => {});
-        const cuit = "23-39916309-5";
-        const mockKey = 'MockAPIKey';
-
+    it('When calling validate without a key, it should throw an error', () => {
         const sut = new Controller();
 
-        sut.get({parameter: cuit, key: mockKey});
-
-        expect(utils.callForStringOrArray).toHaveBeenCalledWith({argument: cuit, stringCallback: expect.any(Function), arrayCallback: expect.any(Function)});
+        expect(() => sut._validate()).toThrowError('An API key is required');
     });
 
-    it('When calling with a single CUIT, it should call the service and return the result as JSON', async () => {
-        const cuit = "23-39916309-5";
-        const mockServiceResponse = {cuit, status: 5};
+    it('When calling authorize, it should validate it received a key and call the service', async () => {
+        const mockKey = 'mockKey';
+        const mockService = {
+            authorize: jest.fn().mockResolvedValue()
+        };
 
+        jest.spyOn(Controller.prototype, '_validate').mockReturnValue();
+
+        const sut = new Controller(mockService);
+
+        await expect(sut.authorize(mockKey)).resolves.toBeUndefined();
+        expect(mockService.authorize).toHaveBeenCalledWith(mockKey);
+        expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
+    });
+
+    it('When calling authorizeAdmin, it should validate it received a key and call the service', async () => {
+        const mockKey = 'mockKey';
+        const mockService = {
+            authorizeAdmin: jest.fn().mockResolvedValue()
+        };
+
+        jest.spyOn(Controller.prototype, '_validate').mockReturnValue();
+
+        const sut = new Controller(mockService);
+
+        await expect(sut.authorizeAdmin(mockKey)).resolves.toBeUndefined();
+        expect(mockService.authorizeAdmin).toHaveBeenCalledWith(mockKey);
+        expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
+    });
+
+    it('When calling get, it should validate it received a key, call the service and return the result as JSON', async () => {
+        const mockKey = 'mockKey';
+        const mockResponseKey = 'responseKey';
+        const mockJSON = 'mockJSON';
+        const mockServiceResponse = { mockResponseKey };
         const mockService = {
             get: jest.fn().mockResolvedValue(mockServiceResponse)
         };
 
+        jest.spyOn(Controller.prototype, '_validate').mockReturnValue();
+        jest.spyOn(Controller.prototype, '_mapToJSON').mockReturnValue(mockJSON);
+
         const sut = new Controller(mockService);
 
-        const result = await sut._getSingle(cuit);
+        const result = await sut.get({key: mockKey, accountKey: mockResponseKey});
 
-        expect(mockService.get).toHaveBeenCalledWith(cuit);
-        expect(result).toEqual(JSON.stringify(mockServiceResponse));
+        expect(result).toEqual(mockJSON);
+        expect(mockService.get).toHaveBeenCalledWith({key: mockKey, accountKey: mockResponseKey});
+        expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
+        expect(Controller.prototype._mapToJSON).toHaveBeenCalledWith(mockServiceResponse);
     });
 
-    it('When calling with an array of CUITs, it should call the service and return the result as JSON', async () => {
-        const cuit = "23-39916309-5";
-        const cuits = [cuit];
-        const mockServiceResponse = [{cuit, status: 5}];
-
+    it('When calling create, it should validate it received a key and call the service with an account', async () => {
+        const mockKey = 'mockKey';
+        const mockAccount = {
+            key: 'mockNewKey',
+            name: 'mockName',
+            isAdmin: false
+        };
         const mockService = {
-            get: jest.fn().mockResolvedValue(mockServiceResponse)
+            create: jest.fn().mockResolvedValue()
         };
 
+        jest.spyOn(Controller.prototype, '_validate').mockReturnValue();
+
         const sut = new Controller(mockService);
 
-        const result = await sut._getSeveral(cuits);
-
-        expect(mockService.get).toHaveBeenCalledWith(cuits);
-        expect(result).toEqual(JSON.stringify(mockServiceResponse));
+        await expect(sut.create({key: mockKey, accountToCreate: mockAccount})).resolves.toBeUndefined();
+        expect(mockService.create).toHaveBeenCalledWith({key: mockKey, newAccount: new Account(mockAccount)});
+        expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
     });
 
-    it('When calling addOrUpdate without an array, it should throw an error', () => {
-        const cuit = "23-39916309-5";
-        const mockKey = 'MockAPIKey';
-
-        const sut = new Controller();
-
-        expect(() => sut.addOrUpdate({financialStatuses: cuit, key: mockKey})).toThrowError('An array of financial statuses is required');
-    });
-
-    it('When calling with a single CUIT, it should call the service and return the result as JSON', async () => {
-        const financialStatuses = [{cuit: "23-39916309-5", status: 2}];
-        const mockServiceResponse = 'mockResponse';
-        const mockKey = 'MockAPIKey';
-
+    it('When calling delete, it should validate it received a key and call the service', async () => {
+        const mockKey = 'mockKey';
+        const mockKeyToDelete = 'mockDeleteKey';
         const mockService = {
-            addOrUpdate: jest.fn().mockResolvedValue(mockServiceResponse)
+            delete: jest.fn().mockResolvedValue()
         };
 
+        jest.spyOn(Controller.prototype, '_validate').mockReturnValue();
+
         const sut = new Controller(mockService);
 
-        const result = await sut.addOrUpdate({financialStatuses, key: mockKey});
-
-        expect(mockService.addOrUpdate).toHaveBeenCalledWith(financialStatuses);
-        expect(result).toEqual(mockServiceResponse);
+        await expect(sut.delete({key: mockKey, accountKey: mockKeyToDelete})).resolves.toBeUndefined();
+        expect(mockService.delete).toHaveBeenCalledWith({key: mockKey, accountKey: mockKeyToDelete});
+        expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
     });
 });

@@ -1,7 +1,7 @@
 const Service = require('../src/service');
 const Account = require('../src/model/account');
 
-describe('Repository Service', () => {
+describe('Account Service', () => {
     afterEach(() => {
         jest.restoreAllMocks();
     });
