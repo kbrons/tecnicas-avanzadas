@@ -26,7 +26,7 @@ const server = express();
 
 server.use(express.json());
 
-server.get('/:accountKey', asyncHandler(async (request, response, next) => {
+server.get('/account/:accountKey', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
         const { accountKey } = request.params;
@@ -36,7 +36,7 @@ server.get('/:accountKey', asyncHandler(async (request, response, next) => {
     }
 }));
 
-server.delete('/:accountKey', asyncHandler(async (request, response, next) => {
+server.delete('/account/:accountKey', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
         const { accountKey } = request.params;
@@ -46,7 +46,7 @@ server.delete('/:accountKey', asyncHandler(async (request, response, next) => {
     }
 }));
 
-server.put('/', asyncHandler(async (request, response, next) => {
+server.put('/account', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
         const accountToCreate = request.body;
