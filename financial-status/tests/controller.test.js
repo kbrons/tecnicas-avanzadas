@@ -17,12 +17,12 @@ describe('Financial Status Controller', () => {
     it('When calling authenticate with a key, it should call fetch with the right URL', async () => {
         const mockAccountURL = 'http://mock.com/';
         const mockKey = 'mockKey';
-        const expectedURL = `${mockAccountURL}/authorize/${mockKey}`;
+        const expectedURL = `${mockAccountURL}/authorize`;
         fetch.mockResolvedValue();
         const sut = new Controller({accountServiceURL: mockAccountURL});
 
         await expect(sut._authenticate(mockKey)).resolves.toBeUndefined();
-        expect(fetch).toHaveBeenCalledWith(expectedURL);
+        expect(fetch).toHaveBeenCalledWith(expectedURL, {method: 'GET', headers: {'Authorization': mockKey}});
     });
 
     it('When calling get, it should call callToStringOrArray with the right parameters', async () => {

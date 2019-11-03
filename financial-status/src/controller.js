@@ -12,7 +12,7 @@ class FinancialStatusController {
             throw new Error('An API key is required');
         }
 
-        await fetch(`${this._accountServiceURL}/authorize/${key}`);
+        await fetch(`${this._accountServiceURL}/authorize`, {method: 'GET', headers: {'Authorization': key}});
     }
 
     async addOrUpdate({financialStatuses, key}) {
