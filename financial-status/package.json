@@ -6,8 +6,8 @@
   "scripts": {
     "test": "jest --coverage --config ../jest.config.json --testPathPattern financial-status/tests/*",
     "start": "node ./src/server.js",
-    "start-dev": "cross-env DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=FINANCIAL_STATUS_DB ACCOUNT_SERVICE_URL=127.0.0.1:3001 node ./src/server.js",
-    "debug-dev": "cross-env DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=FINANCIAL_STATUS_DB ACCOUNT_SERVICE_URL=127.0.0.1:3001 node --inspect ./src/server.js"
+    "start-dev": "cross-env DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=FINANCIAL_STATUS_DB ACCOUNT_SERVICE_URL=http://127.0.0.1:3001 node ./src/server.js",
+    "debug-dev": "cross-env DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=FINANCIAL_STATUS_DB ACCOUNT_SERVICE_URL=http://127.0.0.1:3001 node --inspect ./src/server.js"
   },
   "author": "",
   "license": "ISC",
