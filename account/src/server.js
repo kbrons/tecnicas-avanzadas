@@ -26,22 +26,21 @@ const server = express();
 
 server.use(express.json());
 
-server.get('/:cuit', asyncHandler(async (request, response, next) => {
+server.get('/:accountKey', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
-        const { cuit } = request.params;
-        response.status(200).send(await controller.get({ key, parameter: cuit }));
+        const { accountKey } = request.params;
+        response.status(200).send(await controller.get({ key, accountKey }));
     } catch (error) {
         next(error);
     }
 }));
 
-server.post('/', asyncHandler(async (request, response, next) => {
+server.delete('/:accountKey', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
-        const cuits = request.body;
-        console.log(`Request body: ${cuits}`);
-        response.status(200).send(await controller.get({ key, parameter: cuits }));
+        const { accountKey } = request.params;
+        response.status(200).send(await controller.delete({ key, accountKey }));
     } catch (error) {
         next(error);
     }
@@ -50,8 +49,28 @@ server.post('/', asyncHandler(async (request, response, next) => {
 server.put('/', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
-        const financialStatuses = request.body;
-        await controller.addOrUpdate({ key, financialStatuses });
+        const accountToCreate = request.body;
+        console.log(`Request body: ${accountToCreate}`);
+        response.status(200).send(await controller.create({ key, accountToCreate }));
+    } catch (error) {
+        next(error);
+    }
+}));
+
+server.get('/authorize', asyncHandler(async (request, response, next) => {
+    try {
+        const key = request.header('Authorization');
+        await controller.authorize(key);
+        response.status(200).end();
+    } catch (error) {
+        next(error);
+    }
+}));
+
+server.get('/authorizeAdmin', asyncHandler(async (request, response, next) => {
+    try {
+        const key = request.header('Authorization');
+        await controller.authorizeAdmin(key);
         response.status(200).end();
     } catch (error) {
         next(error);
@@ -63,4 +82,4 @@ server.use((error, request, response, next) => {
     response.status(500).json({ message: error.message });
 });
 
-server.listen(parseInt(process.env.PORT || '3000'));
+server.listen(parseInt(process.env.PORT || '3001'));
