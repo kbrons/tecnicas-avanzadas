@@ -1,4 +1,3 @@
-const utils = require('./utils');
 const Account = require('./model/account');
 
 class AccountController {
@@ -12,32 +11,32 @@ class AccountController {
         }
     }
 
-    authorize(key) {
+    authorize({key}) {
         this._validate(key);
 
         return this._service.authorize(key);
     }
 
-    authorizeAdmin(key) {
+    authorizeAdmin({key}) {
         this._validate(key);
 
         return this._service.authorizeAdmin(key);
     }
 
-    create({key, accountToCreate}) {
+    create({key, parameters}) {
         this._validate(key);
 
-        const newAccount = new Account(accountToCreate);
+        const newAccount = new Account(parameters);
         return this._service.create({key, newAccount});
     }
 
-    delete({key, accountKey}) {
+    delete({key, parameters: { accountKey }}) {
         this._validate(key);
 
         return this._service.delete({key, accountKey});
     }
 
-    async get({ key, accountKey }) {
+    async get({ key, parameters: { accountKey } }) {
         this._validate(key);
 
         const account = await this._service.get({key, accountKey});

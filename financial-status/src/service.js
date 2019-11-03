@@ -1,4 +1,4 @@
-const utils = require('./utils');
+const utils = require('common/src/utils');
 
 const validCuitTypes = ["20", "23", "24", "27", "30", "33", "34"];
 const validationSequence = [2, 3, 4, 5, 6, 7];

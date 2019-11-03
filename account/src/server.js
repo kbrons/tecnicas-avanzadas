@@ -3,6 +3,7 @@ const FinancialStatusService = require('./service');
 const FinancialStatusController = require('./controller');
 const express = require('express');
 const asyncHandler = require('express-async-handler');
+const mapRequest = require('common/src/mapRequest');
 
 const dbParams = {
     host: process.env.DB_HOST,
@@ -28,9 +29,7 @@ server.use(express.json());
 
 server.get('/account/:accountKey', asyncHandler(async (request, response, next) => {
     try {
-        const key = request.header('Authorization');
-        const { accountKey } = request.params;
-        response.status(200).send(await controller.get({ key, accountKey }));
+        response.status(200).send(await controller.get(mapRequest(request)));
     } catch (error) {
         next(error);
     }
@@ -38,9 +37,7 @@ server.get('/account/:accountKey', asyncHandler(async (request, response, next) 
 
 server.delete('/account/:accountKey', asyncHandler(async (request, response, next) => {
     try {
-        const key = request.header('Authorization');
-        const { accountKey } = request.params;
-        response.status(200).send(await controller.delete({ key, accountKey }));
+        response.status(200).send(await controller.delete(mapRequest(request)));
     } catch (error) {
         next(error);
     }
@@ -48,10 +45,7 @@ server.delete('/account/:accountKey', asyncHandler(async (request, response, nex
 
 server.put('/account', asyncHandler(async (request, response, next) => {
     try {
-        const key = request.header('Authorization');
-        const accountToCreate = request.body;
-        console.log(`Request body: ${accountToCreate}`);
-        response.status(200).send(await controller.create({ key, accountToCreate }));
+        response.status(200).send(await controller.create(mapRequest(request)));
     } catch (error) {
         next(error);
     }
@@ -59,8 +53,7 @@ server.put('/account', asyncHandler(async (request, response, next) => {
 
 server.get('/authorize', asyncHandler(async (request, response, next) => {
     try {
-        const key = request.header('Authorization');
-        await controller.authorize(key);
+        await controller.authorize(mapRequest(request));
         response.status(204).end();
     } catch (error) {
         next(error);
@@ -69,8 +62,7 @@ server.get('/authorize', asyncHandler(async (request, response, next) => {
 
 server.get('/authorizeAdmin', asyncHandler(async (request, response, next) => {
     try {
-        const key = request.header('Authorization');
-        await controller.authorizeAdmin(key);
+        await controller.authorizeAdmin(mapRequest(request));
         response.status(204).end();
     } catch (error) {
         next(error);

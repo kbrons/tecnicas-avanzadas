@@ -1,4 +1,4 @@
-const utils = require('./utils');
+const utils = require('common/src/utils');
 const fetch = require('node-fetch');
 
 class FinancialStatusController {
@@ -24,9 +24,9 @@ class FinancialStatusController {
         }
     }
 
-    async addOrUpdate({financialStatuses, key}) {
+    async addOrUpdate({ key, parameters }) {
         await this._authenticate(key);
-
+        const financialStatuses = parameters;
         if (!financialStatuses || !Array.isArray(financialStatuses)) {
             throw new Error('An array of financial statuses is required');
         }
@@ -34,8 +34,10 @@ class FinancialStatusController {
         await this._service.addOrUpdate(financialStatuses);
     }
 
-    async get({parameter, key}) {
+    async get({ key, parameters }) {
         await this._authenticate(key);
+
+        const parameter = Object.values(parameters)[0];
 
         return utils.callForStringOrArray({argument: parameter, stringCallback: cuit => this._getSingle(cuit), arrayCallback: cuits => this._getSeveral(cuits)});
     }

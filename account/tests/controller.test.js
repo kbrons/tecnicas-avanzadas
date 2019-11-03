@@ -45,7 +45,7 @@ describe('Account Controller', () => {
 
         const sut = new Controller(mockService);
 
-        await expect(sut.authorize(mockKey)).resolves.toBeUndefined();
+        await expect(sut.authorize({key: mockKey})).resolves.toBeUndefined();
         expect(mockService.authorize).toHaveBeenCalledWith(mockKey);
         expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
     });
@@ -60,7 +60,7 @@ describe('Account Controller', () => {
 
         const sut = new Controller(mockService);
 
-        await expect(sut.authorizeAdmin(mockKey)).resolves.toBeUndefined();
+        await expect(sut.authorizeAdmin({key: mockKey})).resolves.toBeUndefined();
         expect(mockService.authorizeAdmin).toHaveBeenCalledWith(mockKey);
         expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
     });
@@ -79,7 +79,7 @@ describe('Account Controller', () => {
 
         const sut = new Controller(mockService);
 
-        const result = await sut.get({key: mockKey, accountKey: mockResponseKey});
+        const result = await sut.get({key: mockKey, parameters: {accountKey: mockResponseKey}});
 
         expect(result).toEqual(mockJSON);
         expect(mockService.get).toHaveBeenCalledWith({key: mockKey, accountKey: mockResponseKey});
@@ -102,7 +102,7 @@ describe('Account Controller', () => {
 
         const sut = new Controller(mockService);
 
-        await expect(sut.create({key: mockKey, accountToCreate: mockAccount})).resolves.toBeUndefined();
+        await expect(sut.create({key: mockKey, parameters: mockAccount})).resolves.toBeUndefined();
         expect(mockService.create).toHaveBeenCalledWith({key: mockKey, newAccount: new Account(mockAccount)});
         expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
     });
@@ -118,7 +118,7 @@ describe('Account Controller', () => {
 
         const sut = new Controller(mockService);
 
-        await expect(sut.delete({key: mockKey, accountKey: mockKeyToDelete})).resolves.toBeUndefined();
+        await expect(sut.delete({key: mockKey, parameters: {accountKey: mockKeyToDelete}})).resolves.toBeUndefined();
         expect(mockService.delete).toHaveBeenCalledWith({key: mockKey, accountKey: mockKeyToDelete});
         expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
     });
