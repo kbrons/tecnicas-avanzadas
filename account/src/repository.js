@@ -1,6 +1,6 @@
 const mariadb = require('mariadb');
 const Account = require('./model/account');
-const utils = require('../../common/src/utils');
+const utils = require('common/src/utils');
 const tableName = `ACCOUNT`;
 
 class AccountRepository {

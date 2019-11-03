@@ -1,4 +1,4 @@
-const utils = require('../../common/src/utils');
+const utils = require('common/src/utils');
 const fetch = require('node-fetch');
 
 class FinancialStatusController {

@@ -3,7 +3,7 @@ const FinancialStatusService = require('./service');
 const FinancialStatusController = require('./controller');
 const express = require('express');
 const asyncHandler = require('express-async-handler');
-const mapRequest = require('../../common/src/mapRequest');
+const mapRequest = require('common/src/mapRequest');
 
 const dbParams = {
     host: process.env.DB_HOST,

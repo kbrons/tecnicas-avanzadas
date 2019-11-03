@@ -1,5 +1,5 @@
 const Service = require('../src/service');
-const utils = require('../../common/src/utils');
+const utils = require('common/src/utils');
 
 describe('Financial Status Service', () => {
     afterEach(() => {

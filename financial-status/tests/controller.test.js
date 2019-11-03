@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 jest.mock('node-fetch', () => jest.fn());
 const Controller = require('../src/controller');
-const utils = require('../../common/src/utils');
+const utils = require('common/src/utils');
 
 describe('Financial Status Controller', () => {
     afterEach(() => {
