@@ -3,6 +3,7 @@ const FinancialStatusService = require('./service');
 const FinancialStatusController = require('./controller');
 const express = require('express');
 const asyncHandler = require('express-async-handler');
+const mapRequest = require('../../common/src/mapRequest');
 
 const dbParams = {
     host: process.env.DB_HOST,
@@ -34,9 +35,7 @@ server.use(express.json());
 
 server.get('/:cuit', asyncHandler(async (request, response, next) => {
     try {
-        const key = request.header('Authorization');
-        const { cuit } = request.params;
-        response.status(200).send(await controller.get({ key, parameter: cuit }));
+        response.status(200).send(await controller.get(mapRequest(request)));
     } catch (error) {
         next(error);
     }
@@ -44,20 +43,7 @@ server.get('/:cuit', asyncHandler(async (request, response, next) => {
 
 server.post('/', asyncHandler(async (request, response, next) => {
     try {
-        const key = request.header('Authorization');
-        const cuits = request.body;
-        console.log(`Request body: ${cuits}`);
-        response.status(200).send(await controller.get({ key, parameter: cuits }));
-    } catch (error) {
-        next(error);
-    }
-}));
-
-server.put('/', asyncHandler(async (request, response, next) => {
-    try {
-        const key = request.header('Authorization');
-        const financialStatuses = request.body;
-        await controller.addOrUpdate({ key, financialStatuses });
+        await controller.addOrUpdate(mapRequest(request));
         response.status(200).end();
     } catch (error) {
         next(error);

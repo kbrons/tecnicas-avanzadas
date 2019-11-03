@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 jest.mock('node-fetch', () => jest.fn());
 const Controller = require('../src/controller');
-const utils = require('../src/utils');
+const utils = require('../../common/src/utils');
 
 describe('Financial Status Controller', () => {
     afterEach(() => {
@@ -63,7 +63,7 @@ describe('Financial Status Controller', () => {
 
         const sut = new Controller({});
 
-        await sut.get({ parameter: cuit, key: mockKey });
+        await sut.get({ parameters: {cuit}, key: mockKey });
 
         expect(utils.callForStringOrArray).toHaveBeenCalledWith({ argument: cuit, stringCallback: expect.any(Function), arrayCallback: expect.any(Function) });
         expect(Controller.prototype._authenticate).toHaveBeenCalledWith(mockKey);
@@ -109,7 +109,7 @@ describe('Financial Status Controller', () => {
 
         const sut = new Controller({});
 
-        await expect(sut.addOrUpdate({ financialStatuses: cuit, key: mockKey })).rejects.toThrowError('An array of financial statuses is required');
+        await expect(sut.addOrUpdate({ parameters: cuit, key: mockKey })).rejects.toThrowError('An array of financial statuses is required');
         expect(Controller.prototype._authenticate).toHaveBeenCalledWith(mockKey);
     });
 
@@ -125,7 +125,7 @@ describe('Financial Status Controller', () => {
 
         const sut = new Controller({ service: mockService });
 
-        await expect(sut.addOrUpdate({ financialStatuses, key: mockKey })).resolves.toBeUndefined();
+        await expect(sut.addOrUpdate({ parameters: financialStatuses, key: mockKey })).resolves.toBeUndefined();
         expect(mockService.addOrUpdate).toHaveBeenCalledWith(financialStatuses);
         expect(Controller.prototype._authenticate).toHaveBeenCalledWith(mockKey);
     });

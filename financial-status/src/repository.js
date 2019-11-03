@@ -1,6 +1,6 @@
 const mariadb = require('mariadb');
 const FinancialStatus = require('./model/financialStatus');
-const utils = require('./utils');
+const utils = require('../../common/src/utils');
 const tableName = `FINANCIAL_STATUS`;
 
 class FinancialStatusRepository {

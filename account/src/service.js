@@ -1,6 +1,3 @@
-const utils = require('./utils');
-const Account = require('./model/account');
-
 class AccountService {
     constructor(repository) {
         this._repository = repository;
