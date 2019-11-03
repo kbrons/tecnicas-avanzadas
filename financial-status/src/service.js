@@ -81,7 +81,7 @@ class FinancialStatusService {
             try {
                 this._validate(financialStatus.cuit);
                 return false;
-            } catch {
+            } catch (error) {
                 return true;
             }
 

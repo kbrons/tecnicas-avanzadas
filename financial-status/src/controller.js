@@ -1,26 +1,32 @@
 const utils = require('./utils');
+const fetch = require('node-fetch');
 
 class FinancialStatusController {
-    constructor(service) {
+    constructor({service, accountServiceURL}) {
         this._service = service;
+        this._accountServiceURL = accountServiceURL;
     }
 
-    addOrUpdate({financialStatuses, key}) {
+    async _authenticate(key) {
         if (!key) {
             throw new Error('An API key is required');
         }
+
+        await fetch(`${this._accountServiceURL}/authorize/${key}`);
+    }
+
+    async addOrUpdate({financialStatuses, key}) {
+        await this._authenticate(key);
 
         if (!financialStatuses || !Array.isArray(financialStatuses)) {
             throw new Error('An array of financial statuses is required');
         }
 
-        return this._service.addOrUpdate(financialStatuses);
+        await this._service.addOrUpdate(financialStatuses);
     }
 
-    get({parameter, key}) {
-        if (!key) {
-            throw new Error('An API key is required');
-        }
+    async get({parameter, key}) {
+        await this._authenticate(key);
 
         return utils.callForStringOrArray({argument: parameter, stringCallback: cuit => this._getSingle(cuit), arrayCallback: cuits => this._getSeveral(cuits)});
     }

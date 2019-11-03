@@ -12,6 +12,12 @@ const dbParams = {
     database: process.env.DB_NAME
 };
 
+const accountServiceURL = process.env.ACCOUNT_SERVICE_URL;
+
+if(!accountServiceURL) {
+    throw new Error('The account service URL is required');
+}
+
 const notPresentDbParams = Object.keys(dbParams).filter(dbParameter => !dbParams[dbParameter]).join(', ');
 
 if (notPresentDbParams) {
@@ -20,7 +26,7 @@ if (notPresentDbParams) {
 
 const repository = new FinancialStatusRepository(dbParams);
 const service = new FinancialStatusService(repository);
-const controller = new FinancialStatusController(service);
+const controller = new FinancialStatusController({service, accountServiceURL});
 
 const server = express();
 
