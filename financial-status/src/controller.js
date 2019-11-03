@@ -12,7 +12,16 @@ class FinancialStatusController {
             throw new Error('An API key is required');
         }
 
-        await fetch(`${this._accountServiceURL}/authorize`, {method: 'GET', headers: {'Authorization': key}});
+        const result = await fetch(`${this._accountServiceURL}/authorize`, {method: 'GET', headers: {'Authorization': key}}).then(async response => ({
+            status: response.status,
+            body: (response.status < 200 || response.status >= 300) ? await response.json() : ''
+        }));
+
+        console.log(`Authorize result: ${JSON.stringify(result)}`);
+
+        if (result.status < 200 || result.status >= 300) {
+            throw new Error(result.body.message);
+        }
     }
 
     async addOrUpdate({financialStatuses, key}) {

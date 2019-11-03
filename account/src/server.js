@@ -61,7 +61,7 @@ server.get('/authorize', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
         await controller.authorize(key);
-        response.status(200).end();
+        response.status(204).end();
     } catch (error) {
         next(error);
     }
@@ -71,7 +71,7 @@ server.get('/authorizeAdmin', asyncHandler(async (request, response, next) => {
     try {
         const key = request.header('Authorization');
         await controller.authorizeAdmin(key);
-        response.status(200).end();
+        response.status(204).end();
     } catch (error) {
         next(error);
     }
