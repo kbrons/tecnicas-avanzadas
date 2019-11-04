@@ -65,7 +65,6 @@ describe('Request Repository', () => {
         const mockInterval = 1;
         const mockTime = Date.now();
         jest.spyOn(global.Date, 'now').mockReturnValueOnce(mockTime);
-        const mockCount = 5;
         const zcountMock = jest.fn().mockRejectedValue();
         
         ioredis.mockImplementation(() => ({
