@@ -8,8 +8,7 @@ const mapRequest = require('common/src/mapRequest');
 const envParams = {
     host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
-	interval: process.env.INTERVAL,
-    password: process.env.DB_PASSWORD
+	interval: process.env.INTERVAL
 };
 
 const notPresentEnvParams = Object.keys(envParams).filter(envParam => !envParams[envParam]).join(', ');
