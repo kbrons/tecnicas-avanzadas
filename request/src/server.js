@@ -19,7 +19,7 @@ if (notPresentEnvParams) {
 }
 
 const repository = new RequestRepository(envParams);
-const service = new RequestService({repository, interval: envParams.interval});
+const service = new RequestService({repository, interval: parseInt(envParams.interval)});
 const controller = new RequestController({service, secretKey: ''});
 
 const server = express();
