@@ -5,21 +5,22 @@ const express = require('express');
 const asyncHandler = require('express-async-handler');
 const mapRequest = require('common/src/mapRequest');
 
-const dbParams = {
+const envParams = {
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+	port: process.env.DB_PORT,
+	interval: process.env.INTERVAL,
     password: process.env.DB_PASSWORD
 };
 
-const notPresentDbParams = Object.keys(dbParams).filter(dbParameter => !dbParams[dbParameter]).join(', ');
+const notPresentEnvParams = Object.keys(envParams).filter(envParam => !envParams[envParam]).join(', ');
 
-if (notPresentDbParams) {
-    throw new Error(`One or more required environment variables were not found. Please review your configuration for ${notPresentDbParams}`);
+if (notPresentEnvParams) {
+    throw new Error(`One or more required environment variables were not found. Please review your configuration for ${notPresentEnvParams}`);
 }
 
-const repository = new RequestRepository(dbParams);
-const service = new RequestService(repository);
-const controller = new RequestController(service);
+const repository = new RequestRepository(envParams);
+const service = new RequestService({repository, interval: envParams.interval});
+const controller = new RequestController({service, secretKey: ''});
 
 const server = express();
 
@@ -27,7 +28,8 @@ server.use(express.json());
 
 server.get('/:key', asyncHandler(async (request, response, next) => {
     try {
-        response.status(200).send(await controller.getCountForLastInterval(mapRequest(request)));
+		const result = await controller.getCountForLastInterval(mapRequest(request));
+        response.status(200).send(JSON.stringify(result));
     } catch (error) {
         next(error);
     }
@@ -35,7 +37,8 @@ server.get('/:key', asyncHandler(async (request, response, next) => {
 
 server.put('/:key', asyncHandler(async (request, response, next) => {
     try {
-        response.status(200).send(await controller.recordRequest(mapRequest(request)));
+		await controller.recordRequest(mapRequest(request));
+        response.status(200).end();
     } catch (error) {
         next(error);
     }
@@ -46,4 +49,4 @@ server.use((error, request, response, next) => {
     response.status(500).json({ message: error.message });
 });
 
-server.listen(parseInt(process.env.PORT || '3002'));
+server.listen(parseInt(process.env.PORT || '3003'));
