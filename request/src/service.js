@@ -10,12 +10,8 @@ module.exports = class RequestService{
 		return this._repository.getCountForLastInterval({key, intervalOffset: this._interval});
 	}
 
-	recordRequest(key) {
-		if (!key) {
-			throw new Error('The key is required');
-		}
-
+	async recordRequest(key) {
 		const request = new Request({key});
-		return this._repository.create(request);
+		await this._repository.create(request);
 	}
 }

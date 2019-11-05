@@ -58,15 +58,4 @@ describe('Request Service', () => {
 
 		await expect(sut.recordRequest(mockKey)).rejects.toThrowError(mockError);
 	});
-
-	it('Should throw an error when no key is received to create', async () => {
-		const mockInterval = 5;
-		const repositoryMock = {
-			create: jest.fn().mockResolvedValue()
-		};
-
-		const sut = new Service({interval: mockInterval, repository: repositoryMock});
-
-		expect(() => sut.recordRequest()).toThrowError('The key is required');
-	});
 });
