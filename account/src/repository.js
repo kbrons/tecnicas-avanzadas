@@ -14,15 +14,15 @@ class AccountRepository {
             throw new Error('A key is required');
         }
 
-        const dbResult = await this._connectionPool.query(`SELECT \`key\`, name, is_admin AS isAdmin FROM ${tableName} WHERE \`key\` = ?`, [key]);
+        const dbResult = await this._connectionPool.query(`SELECT \`key\`, name, is_admin AS isAdmin, request_limit AS requestLimit FROM ${tableName} WHERE \`key\` = ?`, [key]);
         
         if (dbResult.length < 1) {
             throw new Error(`The key ${key} does not exist in the database`);
         }
 
-        const {name, isAdmin} = dbResult[0];
+        const {name, isAdmin, requestLimit} = dbResult[0];
 
-        return new Account({name, isAdmin: isAdmin ? true : false, key});
+        return new Account({name, isAdmin: isAdmin ? true : false, key, requestLimit});
     }
 
     async create(account) {
@@ -32,7 +32,7 @@ class AccountRepository {
 
         const escape = this._connectionPool.escape;
 
-        const dbResult = await this._connectionPool.query(`INSERT INTO \`${this._dbName}\`.\`${tableName}\` (\`key\`, \`name\`, \`is_admin\`) VALUES (${escape(account.key)}, ${escape(account.name)}, ${account.isAdmin ? 1 : 0})`);
+        const dbResult = await this._connectionPool.query(`INSERT INTO \`${this._dbName}\`.\`${tableName}\` (\`key\`, \`name\`, \`is_admin\`, \`request_limit\`) VALUES (${escape(account.key)}, ${escape(account.name)}, ${account.isAdmin ? 1 : 0}, ${escape(account.requestLimit)})`);
 
         if(!dbResult || dbResult.affectedRows !== 1) {
             throw new Error('There was an error creating the new account');

@@ -8,7 +8,8 @@ const mapRequest = require('common/src/mapRequest');
 const envParams = {
     host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
-	interval: process.env.INTERVAL
+	interval: process.env.INTERVAL,
+	secretKey: process.env.SECRET_KEY
 };
 
 const notPresentEnvParams = Object.keys(envParams).filter(envParam => !envParams[envParam]).join(', ');
@@ -19,7 +20,7 @@ if (notPresentEnvParams) {
 
 const repository = new RequestRepository(envParams);
 const service = new RequestService({repository, interval: parseInt(envParams.interval)});
-const controller = new RequestController({service, secretKey: ''});
+const controller = new RequestController({service, secretKey: envParams.secretKey});
 
 const server = express();
 

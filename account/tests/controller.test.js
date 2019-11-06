@@ -10,10 +10,11 @@ describe('Account Controller', () => {
         const mockAccount = {
             key: 'mockNewKey',
             name: 'mockName',
-            isAdmin: false
+			isAdmin: false,
+			requestLimit: -1
         };
 
-        const expectedResult = `{\"key\":\"${mockAccount.key}\",\"name\":\"${mockAccount.name}\",\"isAdmin\":${mockAccount.isAdmin}}`;
+        const expectedResult = `{\"key\":\"${mockAccount.key}\",\"name\":\"${mockAccount.name}\",\"isAdmin\":${mockAccount.isAdmin},\"requestLimit\":${mockAccount.requestLimit}}`;
         
         const sut = new Controller();
 
