@@ -6,8 +6,8 @@
   "scripts": {
     "test": "cross-env NODE_PATH=../ jest --coverage --config ../jest.config.json --testPathPattern account/tests/*",
     "start": "node ./src/server.js",
-    "start-dev": "cross-env NODE_PATH=../ DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=ACCOUNT_DB node ./src/server.js",
-    "debug-dev": "cross-env NODE_PATH=../ DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=ACCOUNT_DB node --inspect ./src/server.js"
+    "start-dev": "cross-env NODE_PATH=../ DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=ACCOUNT_DB REQUEST_URL=http://127.0.0.1:3003 REQUEST_KEY=aBcD3241 node ./src/server.js",
+    "debug-dev": "cross-env NODE_PATH=../ DB_HOST=127.0.0.1 DB_PORT=3306 DB_USERNAME=root DB_PASSWORD=keko DB_NAME=ACCOUNT_DB REQUEST_URL=http://127.0.0.1:3003 REQUEST_KEY=aBcD3241 node --inspect ./src/server.js"
   },
   "author": "",
   "license": "ISC",

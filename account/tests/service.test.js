@@ -65,12 +65,32 @@ describe('Account Service', () => {
 
 		jest.spyOn(Service.prototype, '_getAuthorizeInformation').mockResolvedValue({user: mockUser, requestCount: mockRequestCount});
 		jest.spyOn(Service.prototype, '_validateRequestCount').mockReturnValue();
+		jest.spyOn(Service.prototype, '_logRequest').mockResolvedValue();
 
         const sut = new Service({});
 
 		await expect(sut.authorize(mockKey)).resolves.toBeUndefined();
 		expect(Service.prototype._getAuthorizeInformation).toHaveBeenCalledWith(mockKey);
 		expect(Service.prototype._validateRequestCount).toHaveBeenCalledWith({user: mockUser, requestCount: mockRequestCount});
+		expect(Service.prototype._logRequest).toHaveBeenCalledWith(mockKey);
+	});
+	
+	it('When calling authorize with an existing user but the logRequest fails, it should throw an error', async () => {
+		const mockKey = 'mockKey';
+		const mockUser = {key: mockKey, isAdmin: false};
+		const mockRequestCount = 5;
+		const mockError = 'mock error';
+
+		jest.spyOn(Service.prototype, '_getAuthorizeInformation').mockResolvedValue({user: mockUser, requestCount: mockRequestCount});
+		jest.spyOn(Service.prototype, '_validateRequestCount').mockReturnValue();
+		jest.spyOn(Service.prototype, '_logRequest').mockRejectedValue(new Error(mockError));
+
+        const sut = new Service({});
+
+        await expect(sut.authorize(mockKey)).rejects.toThrowError(mockError);
+		expect(Service.prototype._getAuthorizeInformation).toHaveBeenCalledWith(mockKey);
+		expect(Service.prototype._validateRequestCount).toHaveBeenCalledWith({user: mockUser, requestCount: mockRequestCount});
+		expect(Service.prototype._logRequest).toHaveBeenCalledWith(mockKey);
     });
 
     it('When calling authorize with a non-existing user, it should throw an error', async () => {
@@ -91,12 +111,32 @@ describe('Account Service', () => {
 
 		jest.spyOn(Service.prototype, '_getAuthorizeInformation').mockResolvedValue({user: mockUser, requestCount: mockRequestCount});
 		jest.spyOn(Service.prototype, '_validateRequestCount').mockReturnValue();
+		jest.spyOn(Service.prototype, '_logRequest').mockResolvedValue();
 
         const sut = new Service({});
 
         await expect(sut.authorizeAdmin(mockKey)).resolves.toBeUndefined();
 		expect(Service.prototype._getAuthorizeInformation).toHaveBeenCalledWith(mockKey);
 		expect(Service.prototype._validateRequestCount).toHaveBeenCalledWith({user: mockUser, requestCount: mockRequestCount});
+		expect(Service.prototype._logRequest).toHaveBeenCalledWith(mockKey);
+	});
+	
+	it('When calling authorizeAdmin with an existing admin user but the logRequest fails, it should throw an error', async () => {
+		const mockKey = 'mockKey';
+		const mockUser = {key: mockKey, isAdmin: true};
+		const mockRequestCount = 5;
+		const mockError = 'mock error';
+
+		jest.spyOn(Service.prototype, '_getAuthorizeInformation').mockResolvedValue({user: mockUser, requestCount: mockRequestCount});
+		jest.spyOn(Service.prototype, '_validateRequestCount').mockReturnValue();
+		jest.spyOn(Service.prototype, '_logRequest').mockRejectedValue(new Error(mockError));
+
+        const sut = new Service({});
+
+        await expect(sut.authorizeAdmin(mockKey)).rejects.toThrowError(mockError);
+		expect(Service.prototype._getAuthorizeInformation).toHaveBeenCalledWith(mockKey);
+		expect(Service.prototype._validateRequestCount).toHaveBeenCalledWith({user: mockUser, requestCount: mockRequestCount});
+		expect(Service.prototype._logRequest).toHaveBeenCalledWith(mockKey);
     });
 
     it('When calling authorizeAdmin with a non-existing user, it should throw an error', async () => {
@@ -244,6 +284,38 @@ describe('Account Service', () => {
 
         await expect(sut._getRequestCountForLastInterval(mockKey)).rejects.toThrowError(mockErrorResponse);
         expect(fetchModule.fetch).toHaveBeenCalledWith({url: expectedURL, headers: {'Authorization': mockSecretKey}});
+	});
+	
+	it('When calling logRequest and it doesn\'t receive a key, it should throw an error', async () => {
+        const sut = new Service({});
+
+        await expect(sut._logRequest()).rejects.toThrowError('An API key is required');
+    });
+
+    it('When calling logRequest with a key, it should call fetch with the right URL', async () => {
+        const mockRequestURL = 'http://mock.com';
+		const mockKey = 'mockKey';
+		const mockSecretKey = 'mockSecretKey';
+		const expectedURL = `${mockRequestURL}/${mockKey}`;
+		const mockCount = 5;
+		jest.spyOn(fetchModule, 'fetch').mockResolvedValue(mockCount);
+        const sut = new Service({accountServiceURL: mockRequestURL, requestServiceKey: mockSecretKey, requestServiceURL: mockRequestURL});
+
+        await expect(sut._logRequest(mockKey)).resolves.toStrictEqual(mockCount);
+        expect(fetchModule.fetch).toHaveBeenCalledWith({url: expectedURL, method: 'PUT', headers: {'Authorization': mockSecretKey}});
+    });
+
+    it('When calling getCount and the key is rejected, it should throw an error', async () => {
+		const mockKey = 'mockKey';
+		const mockRequestURL = 'http://mock.com';
+		const expectedURL = `${mockRequestURL}/${mockKey}`;
+		const mockSecretKey = 'mockSecretKey';
+        const mockErrorResponse = 'Not authorized error mock';
+		jest.spyOn(fetchModule, 'fetch').mockImplementation(() => {throw new Error(mockErrorResponse)});
+        const sut = new Service({accountServiceURL: mockRequestURL, requestServiceKey: mockSecretKey, requestServiceURL: mockRequestURL});
+
+        await expect(sut._logRequest(mockKey)).rejects.toThrowError(mockErrorResponse);
+        expect(fetchModule.fetch).toHaveBeenCalledWith({url: expectedURL, method: 'PUT', headers: {'Authorization': mockSecretKey}});
     });
 
 });

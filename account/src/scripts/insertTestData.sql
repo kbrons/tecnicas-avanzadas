@@ -1,2 +1,2 @@
 REPLACE INTO `ACCOUNT_DB`.`ACCOUNT` (`key`, `is_admin`, `name`, `request_limit`) values ("4b9e037f-ba6b-4718-b5b9-1d4d6628cd23",1,"Admin", -1);
-REPLACE INTO `ACCOUNT_DB`.`ACCOUNT` (`key`, `is_admin`, `name`, `request_limit`) values ("e7cada5b-e2ff-4d26-9dfb-d5a9fad61323",0,"User", 20);
+REPLACE INTO `ACCOUNT_DB`.`ACCOUNT` (`key`, `is_admin`, `name`, `request_limit`) values ("e7cada5b-e2ff-4d26-9dfb-d5a9fad61323",0,"User", 3);

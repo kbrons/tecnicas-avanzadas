@@ -7,12 +7,20 @@ class AccountService {
 		this._requestServiceKey = requestServiceKey;
 	}
 
+	async _logRequest(key) {
+		if (!key) {
+			throw new Error('An API key is required');
+		}
+
+		return await fetch({ url: `${this._requestServiceURL}/${key}`, method: 'PUT',headers: { 'Authorization': this._requestServiceKey } });
+	}
+
 	async _getRequestCountForLastInterval(key) {
 		if (!key) {
 			throw new Error('An API key is required');
 		}
 
-		return await fetch({ url: `${this._requestServiceURL}/${key}`, headers: { 'Authorization': this._requestServiceKey } })
+		return await fetch({ url: `${this._requestServiceURL}/${key}`, headers: { 'Authorization': this._requestServiceKey } });
 	}
 
 	async _getAuthorizeInformation(key) {
@@ -39,11 +47,13 @@ class AccountService {
 	async authorize(key) {
 		const { user, requestCount } = await this._getAuthorizeInformation(key);
 
-		if (!user || !requestCount) {
+		if (!user || !Number.isInteger(requestCount)) {
 			throw new Error('The account is not authorized to perform this operation');
 		}
 
 		this._validateRequestCount({ user, requestCount });
+
+		await this._logRequest(key);
 	}
 
 	async authorizeAdmin(key) {
@@ -54,6 +64,8 @@ class AccountService {
 		}
 
 		this._validateRequestCount({ user, requestCount });
+		
+		await this._logRequest(key);
 	}
 
 	async create({ key, newAccount }) {

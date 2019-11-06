@@ -22,7 +22,7 @@ if (notPresentEnvParams) {
 }
 
 const repository = new AccountRepository(envParams);
-const service = new AccountService(repository);
+const service = new AccountService({repository, requestServiceURL: envParams.requestServiceURL, requestServiceKey: envParams.requestServiceKey});
 const controller = new AccountController(service);
 
 const server = express();
