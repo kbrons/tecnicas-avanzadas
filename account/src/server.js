@@ -1,27 +1,29 @@
-const FinancialStatusRepository = require('./repository');
-const FinancialStatusService = require('./service');
-const FinancialStatusController = require('./controller');
+const AccountRepository = require('./repository');
+const AccountService = require('./service');
+const AccountController = require('./controller');
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const mapRequest = require('common/src/mapRequest');
 
-const dbParams = {
+const envParams = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+	database: process.env.DB_NAME,
+	requestServiceURL: process.env.REQUEST_URL,
+	requestServiceKey: process.env.REQUEST_KEY
 };
 
-const notPresentDbParams = Object.keys(dbParams).filter(dbParameter => !dbParams[dbParameter]).join(', ');
+const notPresentEnvParams = Object.keys(envParams).filter(envParameter => !envParams[envParameter]).join(', ');
 
-if (notPresentDbParams) {
-    throw new Error(`One or more required environment variables were not found. Please review your configuration for ${notPresentDbParams}`);
+if (notPresentEnvParams) {
+    throw new Error(`One or more required environment variables were not found. Please review your configuration for ${notPresentEnvParams}`);
 }
 
-const repository = new FinancialStatusRepository(dbParams);
-const service = new FinancialStatusService(repository);
-const controller = new FinancialStatusController(service);
+const repository = new AccountRepository(envParams);
+const service = new AccountService(repository);
+const controller = new AccountController(service);
 
 const server = express();
 

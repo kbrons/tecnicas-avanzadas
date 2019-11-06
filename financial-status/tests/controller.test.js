@@ -1,5 +1,5 @@
-const fetch = require('node-fetch');
-jest.mock('node-fetch', () => jest.fn());
+const fetchModule = require('common/src/fetchService');
+jest.mock('common/src/fetchService', () => ({fetch: jest.fn()}));
 const Controller = require('../src/controller');
 const utils = require('common/src/utils');
 
@@ -17,42 +17,24 @@ describe('Financial Status Controller', () => {
     it('When calling authenticate with a key, it should call fetch with the right URL', async () => {
         const mockAccountURL = 'http://mock.com/';
         const mockKey = 'mockKey';
-        const expectedURL = `${mockAccountURL}/authorize`;
-        fetch.mockResolvedValue({status: 204});
+		const expectedURL = `${mockAccountURL}/authorize`;
+		jest.spyOn(fetchModule, 'fetch').mockResolvedValue({status: 204});
         const sut = new Controller({accountServiceURL: mockAccountURL});
 
         await expect(sut._authenticate(mockKey)).resolves.toBeUndefined();
-        expect(fetch).toHaveBeenCalledWith(expectedURL, {method: 'GET', headers: {'Authorization': mockKey}});
+        expect(fetchModule.fetch).toHaveBeenCalledWith({url: expectedURL, headers: {'Authorization': mockKey}});
     });
 
     it('When calling authenticate and the key is rejected, it should throw an error', async () => {
-        const mockAccountURL = 'http://mock.com/';
-        const mockKey = 'mockKey';
-        const expectedURL = `${mockAccountURL}/authorize`;
+		const mockKey = 'mockKey';
+		const mockAccountURL = 'http://mock.com/';
+		const expectedURL = `${mockAccountURL}/authorize`;
         const mockErrorResponse = 'Not authorized error mock';
-        fetch.mockResolvedValue({
-            status: 500, 
-            json: () => ({message: mockErrorResponse})
-        });
+		jest.spyOn(fetchModule, 'fetch').mockImplementation(() => {throw new Error(mockErrorResponse)});
         const sut = new Controller({accountServiceURL: mockAccountURL});
 
         await expect(sut._authenticate(mockKey)).rejects.toThrowError(mockErrorResponse);
-        expect(fetch).toHaveBeenCalledWith(expectedURL, {method: 'GET', headers: {'Authorization': mockKey}});
-    });
-
-    it('When calling authenticate and the key is rejected, it should throw an error', async () => {
-        const mockAccountURL = 'http://mock.com/';
-        const mockKey = 'mockKey';
-        const expectedURL = `${mockAccountURL}/authorize`;
-        const mockErrorResponse = 'Not authorized error mock';
-        fetch.mockResolvedValue({
-            status: 100, 
-            json: () => ({message: mockErrorResponse})
-        });
-        const sut = new Controller({accountServiceURL: mockAccountURL});
-
-        await expect(sut._authenticate(mockKey)).rejects.toThrowError(mockErrorResponse);
-        expect(fetch).toHaveBeenCalledWith(expectedURL, {method: 'GET', headers: {'Authorization': mockKey}});
+        expect(fetchModule.fetch).toHaveBeenCalledWith({url: expectedURL, headers: {'Authorization': mockKey}});
     });
 
     it('When calling get, it should call callToStringOrArray with the right parameters', async () => {
