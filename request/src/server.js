@@ -4,19 +4,9 @@ const RequestController = require('./controller');
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const mapRequest = require('common/src/mapRequest');
+const { getEnvParams } = require('./getEnvParams');
 
-const envParams = {
-    host: process.env.DB_HOST,
-	port: process.env.DB_PORT,
-	interval: process.env.INTERVAL,
-	secretKey: process.env.SECRET_KEY
-};
-
-const notPresentEnvParams = Object.keys(envParams).filter(envParam => !envParams[envParam]).join(', ');
-
-if (notPresentEnvParams) {
-    throw new Error(`One or more required environment variables were not found. Please review your configuration for ${notPresentEnvParams}`);
-}
+const envParams = getEnvParams();
 
 const repository = new RequestRepository(envParams);
 const service = new RequestService({repository, interval: parseInt(envParams.interval)});
