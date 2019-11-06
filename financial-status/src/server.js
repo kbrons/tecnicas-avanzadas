@@ -5,29 +5,13 @@ const express = require('express');
 const asyncHandler = require('express-async-handler');
 const mapRequest = require('common/src/mapRequest');
 
-const dbParams = {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-};
+const { getEnvParams } = require('./getEnvParams');
 
-const accountServiceURL = process.env.ACCOUNT_SERVICE_URL;
+const envParams = getEnvParams();
 
-if(!accountServiceURL) {
-    throw new Error('The account service URL is required');
-}
-
-const notPresentDbParams = Object.keys(dbParams).filter(dbParameter => !dbParams[dbParameter]).join(', ');
-
-if (notPresentDbParams) {
-    throw new Error(`One or more required environment variables were not found. Please review your configuration for ${notPresentDbParams}`);
-}
-
-const repository = new FinancialStatusRepository(dbParams);
+const repository = new FinancialStatusRepository(envParams);
 const service = new FinancialStatusService(repository);
-const controller = new FinancialStatusController({service, accountServiceURL});
+const controller = new FinancialStatusController({service, accountServiceURL: envParams.accountServiceURL});
 
 const server = express();
 
