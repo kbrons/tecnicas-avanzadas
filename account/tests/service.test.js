@@ -56,6 +56,29 @@ describe('Account Service', () => {
 
         expect(Service.prototype.authorizeAdmin).toHaveBeenCalledWith(mockKey);
         expect(repositoryMock.create).toHaveBeenCalledWith(mockNewAccount);
+	});
+	
+	it('When calling update, it should check the permissions of the key and update the account', async () => {
+        const mockKey = 'mockKey';
+
+        const mockNewAccount = {
+            key: 'test',
+            name: 'test',
+            isAdmin: false
+        };
+
+        const repositoryMock = {
+            update: jest.fn().mockResolvedValue()
+        };
+
+        jest.spyOn(Service.prototype, 'authorizeAdmin').mockResolvedValue();
+
+        const sut = new Service({repository: repositoryMock});
+
+        await sut.update({key: mockKey, accountToUpdate: mockNewAccount});
+
+        expect(Service.prototype.authorizeAdmin).toHaveBeenCalledWith(mockKey);
+        expect(repositoryMock.update).toHaveBeenCalledWith(mockNewAccount);
     });
 
     it('When calling authorize with an existing user, it should return', async () => {

@@ -53,6 +53,14 @@ server.put('/account', asyncHandler(async (request, response, next) => {
     }
 }));
 
+server.post('/account', asyncHandler(async (request, response, next) => {
+    try {
+        response.status(200).send(await controller.update(mapRequest(request)));
+    } catch (error) {
+        next(error);
+    }
+}));
+
 server.get('/authorize', asyncHandler(async (request, response, next) => {
     try {
         await controller.authorize(mapRequest(request));

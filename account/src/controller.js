@@ -28,6 +28,13 @@ class AccountController {
 
         const newAccount = new Account(parameters);
         return this._service.create({key, newAccount});
+	}
+	
+	update({key, parameters}) {
+        this._validate(key);
+
+        const accountToUpdate = new Account(parameters);
+        return this._service.update({key, accountToUpdate});
     }
 
     delete({key, parameters: { accountKey }}) {

@@ -73,6 +73,11 @@ class AccountService {
 		await this._repository.create(newAccount);
 	}
 
+	async update({ key, accountToUpdate }) {
+		await this.authorizeAdmin(key);
+		await this._repository.update(accountToUpdate);
+	}
+	
 	async get({ key, accountKey }) {
 		await this.authorizeAdmin(key);
 		return this._repository.get(accountKey);

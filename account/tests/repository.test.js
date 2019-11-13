@@ -64,6 +64,22 @@ describe('Account Repository', () => {
         const result = sut.create(5);
 
         expect(result).rejects.toThrowError('An account is required');
+	});
+	
+	test('When calling update without a parameter, it should throw an error', async () => {
+        const sut = new AccountRepository({});
+
+        const result = sut.update();
+
+        expect(result).rejects.toThrowError('An account is required');
+    });
+
+    test('When calling update without an account, it should throw an error', async () => {
+        const sut = new AccountRepository({});
+
+        const result = sut.update(5);
+
+        expect(result).rejects.toThrowError('An account is required');
     });
 
     test('When calling delete without a key, it should throw an error', async () => {
@@ -85,9 +101,9 @@ describe('Account Repository', () => {
 
         expect(mockQueryInstance).toHaveBeenCalled();
         expect(mockQueryInstance.mock.calls[0][0]).toEqual(expect.stringContaining(mockAccount.key));
-    });
+	});
 
-    test('When calling create with an account but the database doesn\'t return affected rows, it should throw an error', async () => {
+	test('When calling create with an account but the database doesn\'t return affected rows, it should throw an error', async () => {
         const mockAccount = new Account({ key: "432423423", name: "Jock Shipperbottom" })
 
         const mockQueryInstance = mockMariaDb(() => Promise.resolve())
@@ -111,6 +127,51 @@ describe('Account Repository', () => {
 
         expect(mockQueryInstance).toHaveBeenCalled();
         expect(mockQueryInstance.mock.calls[0][0]).toEqual(expect.stringContaining(mockAccount.key));
+    });
+	
+	test('When calling update with an account, it should call mariadb to update it', async () => {
+        const mockAccount = new Account({ key: "432423423", requestLimit: 5, name: "Jock Shipperbottom" })
+
+        const mockQueryInstance = mockMariaDb(() => Promise.resolve({ affectedRows: 1, insertId: 1, warningStatus: 0 }))
+
+        const sut = new AccountRepository({});
+
+        await sut.update(mockAccount);
+
+        expect(mockQueryInstance).toHaveBeenCalled();
+		expect(mockQueryInstance.mock.calls[0][0]).toEqual(expect.stringContaining(mockAccount.key));
+		expect(mockQueryInstance.mock.calls[0][0]).not.toEqual(expect.stringContaining(mockAccount.isAdmin.toString()));
+		expect(mockQueryInstance.mock.calls[0][0]).not.toEqual(expect.stringContaining(mockAccount.name));
+	});
+	
+	test('When calling update with an account but the database doesn\'t return affected rows, it should throw an error', async () => {
+        const mockAccount = new Account({ key: "432423423", requestLimit: 5, name: "Jock Shipperbottom"  })
+
+        const mockQueryInstance = mockMariaDb(() => Promise.resolve())
+
+        const sut = new AccountRepository({});
+
+        expect(sut.update(mockAccount)).rejects.toThrowError('There was an error updating the account');
+
+        expect(mockQueryInstance).toHaveBeenCalled();
+		expect(mockQueryInstance.mock.calls[0][0]).toEqual(expect.stringContaining(mockAccount.key));
+		expect(mockQueryInstance.mock.calls[0][0]).not.toEqual(expect.stringContaining(mockAccount.isAdmin.toString()));
+		expect(mockQueryInstance.mock.calls[0][0]).not.toEqual(expect.stringContaining(mockAccount.name));
+    });
+
+    test('When calling update with an account but the database doesn\'t return one affected row, it should throw an error', async () => {
+        const mockAccount = new Account({ key: "432423423", requestLimit: 5, name: "Jock Shipperbottom"  })
+
+        const mockQueryInstance = mockMariaDb(() => Promise.resolve({ affectedRows: 0, insertId: 1, warningStatus: 0 }))
+
+        const sut = new AccountRepository({});
+
+        expect(sut.update(mockAccount)).rejects.toThrowError('There was an error updating the account');
+
+        expect(mockQueryInstance).toHaveBeenCalled();
+		expect(mockQueryInstance.mock.calls[0][0]).toEqual(expect.stringContaining(mockAccount.key));
+		expect(mockQueryInstance.mock.calls[0][0]).not.toEqual(expect.stringContaining(mockAccount.isAdmin.toString()));
+		expect(mockQueryInstance.mock.calls[0][0]).not.toEqual(expect.stringContaining(mockAccount.name));
     });
 
     test('When calling delete with an account but the database doesn\'t return affected rows, it should throw an error', async () => {

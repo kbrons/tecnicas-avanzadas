@@ -37,6 +37,20 @@ class AccountRepository {
         if(!dbResult || dbResult.affectedRows !== 1) {
             throw new Error('There was an error creating the new account');
         }
+	}
+	
+	async update(account) {
+        if(!account || !(account instanceof Account)) {
+            throw new Error('An account is required');
+        }
+
+        const escape = this._connectionPool.escape;
+
+        const dbResult = await this._connectionPool.query(`UPDATE \`${this._dbName}\`.\`${tableName}\` SET \`request_limit\` = ${escape(account.requestLimit)} WHERE \`key\` = ${escape(account.key)}`);
+
+        if(!dbResult || dbResult.affectedRows !== 1) {
+            throw new Error('There was an error updating the account');
+        }
     }
 
     async delete(key) {

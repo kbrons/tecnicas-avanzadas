@@ -106,6 +106,26 @@ describe('Account Controller', () => {
         await expect(sut.create({key: mockKey, parameters: mockAccount})).resolves.toBeUndefined();
         expect(mockService.create).toHaveBeenCalledWith({key: mockKey, newAccount: new Account(mockAccount)});
         expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
+	});
+	
+	it('When calling update, it should validate it received a key and call the service with an account', async () => {
+        const mockKey = 'mockKey';
+        const mockAccount = {
+            key: 'mockNewKey',
+            name: 'mockName',
+            isAdmin: false
+        };
+        const mockService = {
+            update: jest.fn().mockResolvedValue()
+        };
+
+        jest.spyOn(Controller.prototype, '_validate').mockReturnValue();
+
+        const sut = new Controller(mockService);
+
+        await expect(sut.update({key: mockKey, parameters: mockAccount})).resolves.toBeUndefined();
+        expect(mockService.update).toHaveBeenCalledWith({key: mockKey, accountToUpdate: new Account(mockAccount)});
+        expect(Controller.prototype._validate).toHaveBeenCalledWith(mockKey);
     });
 
     it('When calling delete, it should validate it received a key and call the service', async () => {
