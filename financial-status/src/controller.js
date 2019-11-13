@@ -28,9 +28,7 @@ class FinancialStatusController {
 	async get({ key, parameters }) {
 		await this._authenticate(key);
 
-		const parameter = Object.values(parameters)[0];
-
-		return utils.callForStringOrArray({ argument: parameter, stringCallback: cuit => this._getSingle(cuit), arrayCallback: cuits => this._getSeveral(cuits) });
+		return utils.callForStringOrArray({ argument: parameters, stringCallback: cuit => this._getSingle(cuit), arrayCallback: cuits => this._getSeveral(cuits) });
 	}
 
 	async _getSingle(parameter) {

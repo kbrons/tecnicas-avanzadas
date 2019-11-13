@@ -45,7 +45,7 @@ describe('Financial Status Controller', () => {
 
         const sut = new Controller({});
 
-        await sut.get({ parameters: {cuit}, key: mockKey });
+        await sut.get({ parameters: cuit, key: mockKey });
 
         expect(utils.callForStringOrArray).toHaveBeenCalledWith({ argument: cuit, stringCallback: expect.any(Function), arrayCallback: expect.any(Function) });
         expect(Controller.prototype._authenticate).toHaveBeenCalledWith(mockKey);
