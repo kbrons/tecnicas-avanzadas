@@ -23,6 +23,7 @@ Permite verificar el estado financiero de uno o más CUIT/CUIL. Requiere el head
 #### Endpoints
 - GET /{cuit} permite obtener el estado financiero de un CUIT/CUIL
 - POST / permite obtener el estado financiero de varios CUIT/CUILs. Espera un array de strings en el body
+- POST /addorupdate permite agregar CUIT/CUILs a la base de datos. Espera un array de objetos con cuit y status en el body
 
 ### Account
 Permite autenticar un usuario de la solución utilizando un API Key. También se encarga de la creación y eliminación de usuarios. Requiere el header Authorization con una API Key autorizada para autenticar al usuario contra el microservicio Account.
@@ -31,6 +32,7 @@ Permite autenticar un usuario de la solución utilizando un API Key. También se
 - GET /account/{accountKey} permite obtener el detalle de un usuario. Requiere cuenta de administrador
 - DELETE /account/{accountKey} permite borrar un usuario del sistema. Requiere cuenta de administrador
 - PUT /account permite crear un nuevo usuario del sistema. Requiere cuenta de administrador
+- POST /account permite actualizar el límite de requests de un usuario del sistema. Requiere cuenta de administrador
 - GET /authorize permite autenticar un usuario sin permisos de administrador.
 - GET /authorizeAdmin permite autenticar un usuario con permisos de administrador.
 
