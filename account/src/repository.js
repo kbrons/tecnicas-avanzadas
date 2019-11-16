@@ -32,7 +32,7 @@ class AccountRepository {
 
         const escape = this._connectionPool.escape;
 
-        const dbResult = await this._connectionPool.query(`INSERT INTO \`${this._dbName}\`.\`${tableName}\` (\`key\`, \`name\`, \`is_admin\`, \`request_limit\`) VALUES (${escape(account.key)}, ${escape(account.name)}, ${account.isAdmin ? 1 : 0}, ${escape(account.requestLimit)})`);
+        const dbResult = await this._connectionPool.query(`INSERT INTO \`${this._dbName}\`.\`${tableName}\` (\`key\`, \`name\`, \`is_admin\`, \`request_limit\`) VALUES (${escape(account.key)}, ${escape(account.name)}, ${account.isAdmin ? 1 : 0}, ${account.requestLimit})`);
 
         if(!dbResult || dbResult.affectedRows !== 1) {
             throw new Error('There was an error creating the new account');
@@ -46,7 +46,7 @@ class AccountRepository {
 
         const escape = this._connectionPool.escape;
 
-        const dbResult = await this._connectionPool.query(`UPDATE \`${this._dbName}\`.\`${tableName}\` SET \`request_limit\` = ${escape(account.requestLimit)} WHERE \`key\` = ${escape(account.key)}`);
+        const dbResult = await this._connectionPool.query(`UPDATE \`${this._dbName}\`.\`${tableName}\` SET \`request_limit\` = ${account.requestLimit} WHERE \`key\` = ${escape(account.key)}`);
 
         if(!dbResult || dbResult.affectedRows !== 1) {
             throw new Error('There was an error updating the account');

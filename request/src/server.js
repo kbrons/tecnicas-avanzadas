@@ -3,7 +3,6 @@ const RequestService = require('./service');
 const RequestController = require('./controller');
 const express = require('express');
 const asyncHandler = require('express-async-handler');
-const mapRequest = require('common/src/mapRequest');
 
 const envParams = {
     host: process.env.DB_HOST,

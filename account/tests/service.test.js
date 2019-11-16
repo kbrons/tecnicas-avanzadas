@@ -143,6 +143,23 @@ describe('Account Service', () => {
 		expect(Service.prototype._validateRequestCount).toHaveBeenCalledWith({user: mockUser, requestCount: mockRequestCount});
 		expect(Service.prototype._logRequest).toHaveBeenCalledWith(mockKey);
 	});
+
+	it('When calling authorizeAdmin with an existing admin user and a count of 0, it should return', async () => {
+		const mockKey = 'mockKey';
+		const mockUser = {key: mockKey, isAdmin: true};
+		const mockRequestCount = 0;
+
+		jest.spyOn(Service.prototype, '_getAuthorizeInformation').mockResolvedValue({user: mockUser, requestCount: mockRequestCount});
+		jest.spyOn(Service.prototype, '_validateRequestCount').mockReturnValue();
+		jest.spyOn(Service.prototype, '_logRequest').mockResolvedValue();
+
+        const sut = new Service({});
+
+        await expect(sut.authorizeAdmin(mockKey)).resolves.toBeUndefined();
+		expect(Service.prototype._getAuthorizeInformation).toHaveBeenCalledWith(mockKey);
+		expect(Service.prototype._validateRequestCount).toHaveBeenCalledWith({user: mockUser, requestCount: mockRequestCount});
+		expect(Service.prototype._logRequest).toHaveBeenCalledWith(mockKey);
+	});
 	
 	it('When calling authorizeAdmin with an existing admin user but the logRequest fails, it should throw an error', async () => {
 		const mockKey = 'mockKey';

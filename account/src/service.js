@@ -58,8 +58,8 @@ class AccountService {
 
 	async authorizeAdmin(key) {
 		const { user, requestCount } = await this._getAuthorizeInformation(key);
-
-		if (!user || !user.isAdmin || !requestCount) {
+		
+		if (!user || !user.isAdmin || (!requestCount && requestCount !== 0)) {
 			throw new Error('The account is not authorized to perform this operation');
 		}
 
