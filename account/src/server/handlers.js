@@ -7,7 +7,8 @@ const buildHandlers = ({controller}) => {
 
 	const getKey = asyncHandler(async (request, response, next) => {
 		try {
-			response.status(200).send(await controller.get({key: request.header('Authorization'), parameters: request.params}));
+			const result = await controller.get({key: request.header('Authorization'), parameters: request.params});
+			response.status(200).send(result);
 		} catch (error) {
 			next(error);
 		}
@@ -15,7 +16,8 @@ const buildHandlers = ({controller}) => {
 
 	const deleteKey = asyncHandler(async (request, response, next) => {
 		try {
-			response.status(200).send(await controller.delete({key: request.header('Authorization'), parameters: request.params}));
+			const result = await controller.delete({key: request.header('Authorization'), parameters: request.params});
+			response.status(200).send(result);
 		} catch (error) {
 			next(error);
 		}
@@ -23,7 +25,8 @@ const buildHandlers = ({controller}) => {
 
 	const putAccount = asyncHandler(async (request, response, next) => {
 		try {
-			response.status(200).send(await controller.create({key: request.header('Authorization'), parameters: request.body}));
+			const result = await controller.create({key: request.header('Authorization'), parameters: request.body});
+			response.status(200).send(result);
 		} catch (error) {
 			next(error);
 		}
@@ -31,7 +34,8 @@ const buildHandlers = ({controller}) => {
 
 	const postAccount = asyncHandler(async (request, response, next) => {
 		try {
-			response.status(200).send(await controller.update({key: request.header('Authorization'), parameters: request.body}));
+			const result = await controller.update({key: request.header('Authorization'), parameters: request.body});
+			response.status(200).send(result);
 		} catch (error) {
 			next(error);
 		}

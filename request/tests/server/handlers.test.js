@@ -3,7 +3,7 @@ const { buildHandlers } = require('../../src/server/handlers');
 
 jest.mock('express-async-handler', () => jest.fn((handler) => handler));
 
-describe('Request Handlers', () => {
+describe('Request Request Handlers', () => {
 	afterEach(() => {
 		jest.restoreAllMocks();
 	});
