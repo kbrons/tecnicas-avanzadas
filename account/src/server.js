@@ -2,7 +2,7 @@ const AccountRepository = require('./repository');
 const AccountService = require('./service');
 const AccountController = require('./controller');
 const express = require('express');
-const asyncHandler = require('express-async-handler');
+const { buildHandlers } = require('./server/handlers');
 
 const envParams = {
     host: process.env.DB_HOST,
@@ -28,55 +28,19 @@ const server = express();
 
 server.use(express.json());
 
-server.get('/account/:accountKey', asyncHandler(async (request, response, next) => {
-    try {
-        response.status(200).send(await controller.get({key: request.header('Authorization'), parameters: request.params}));
-    } catch (error) {
-        next(error);
-    }
-}));
+const { getKey, deleteKey, putAccount, postAccount, authorize, authorizeAdmin } = buildHandlers({controller});
 
-server.delete('/account/:accountKey', asyncHandler(async (request, response, next) => {
-    try {
-        response.status(200).send(await controller.delete({key: request.header('Authorization'), parameters: request.params}));
-    } catch (error) {
-        next(error);
-    }
-}));
+server.get('/account/:accountKey', getKey);
 
-server.put('/account', asyncHandler(async (request, response, next) => {
-    try {
-        response.status(200).send(await controller.create({key: request.header('Authorization'), parameters: request.body}));
-    } catch (error) {
-        next(error);
-    }
-}));
+server.delete('/account/:accountKey', deleteKey);
 
-server.post('/account', asyncHandler(async (request, response, next) => {
-    try {
-        response.status(200).send(await controller.update({key: request.header('Authorization'), parameters: request.body}));
-    } catch (error) {
-        next(error);
-    }
-}));
+server.put('/account', putAccount);
 
-server.get('/authorize', asyncHandler(async (request, response, next) => {
-    try {
-        await controller.authorize({key: request.header('Authorization')});
-        response.status(204).end();
-    } catch (error) {
-        next(error);
-    }
-}));
+server.post('/account', postAccount);
 
-server.get('/authorizeAdmin', asyncHandler(async (request, response, next) => {
-    try {
-        await controller.authorizeAdmin({key: request.header('Authorization')});
-        response.status(204).end();
-    } catch (error) {
-        next(error);
-    }
-}));
+server.get('/authorize', authorize);
+
+server.get('/authorizeAdmin', authorizeAdmin);
 
 server.use((error, request, response, next) => {
     console.log(error);
