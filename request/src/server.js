@@ -2,10 +2,10 @@ const RequestRepository = require('./repository');
 const RequestService = require('./service');
 const RequestController = require('./controller');
 const express = require('express');
-const asyncHandler = require('express-async-handler');
+const { buildHandlers } = require('./server/handlers');
 
 const envParams = {
-    host: process.env.DB_HOST,
+	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
 	interval: process.env.INTERVAL,
 	secretKey: process.env.SECRET_KEY
@@ -14,38 +14,26 @@ const envParams = {
 const notPresentEnvParams = Object.keys(envParams).filter(envParam => !envParams[envParam]).join(', ');
 
 if (notPresentEnvParams) {
-    throw new Error(`One or more required environment variables were not found. Please review your configuration for ${notPresentEnvParams}`);
+	throw new Error(`One or more required environment variables were not found. Please review your configuration for ${notPresentEnvParams}`);
 }
 
 const repository = new RequestRepository(envParams);
-const service = new RequestService({repository, interval: parseInt(envParams.interval)});
-const controller = new RequestController({service, secretKey: envParams.secretKey});
+const service = new RequestService({ repository, interval: parseInt(envParams.interval) });
+const controller = new RequestController({ service, secretKey: envParams.secretKey });
+
+const { getKey, putKey } = buildHandlers({ controller });
 
 const server = express();
 
 server.use(express.json());
 
-server.get('/:key', asyncHandler(async (request, response, next) => {
-    try {
-		const result = await controller.getCountForLastInterval({key: request.header('Authorization'), parameters: request.params});
-        response.status(200).send(JSON.stringify(result));
-    } catch (error) {
-        next(error);
-    }
-}));
+server.get('/:key', getKey);
 
-server.put('/:key', asyncHandler(async (request, response, next) => {
-    try {
-		await controller.recordRequest({key: request.header('Authorization'), parameters: request.params});
-        response.status(200).end();
-    } catch (error) {
-        next(error);
-    }
-}));
+server.put('/:key', putKey);
 
 server.use((error, request, response, next) => {
-    console.log(error);
-    response.status(500).json({ message: error.message });
+	console.log(error);
+	response.status(500).json({ message: error.message });
 });
 
 server.listen(parseInt(process.env.PORT || '3003'));

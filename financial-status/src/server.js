@@ -2,8 +2,7 @@ const FinancialStatusRepository = require('./repository');
 const FinancialStatusService = require('./service');
 const FinancialStatusController = require('./controller');
 const express = require('express');
-const asyncHandler = require('express-async-handler');
-const mapRequest = require('common/src/mapRequest');
+const { buildHandlers } = require('./server/handlers');
 
 const dbParams = {
     host: process.env.DB_HOST,
@@ -33,30 +32,13 @@ const server = express();
 
 server.use(express.json());
 
-server.get('/:cuit', asyncHandler(async (request, response, next) => {
-    try {
-        response.status(200).send(await controller.get({key: request.header("Authorization"), parameters: request.params['cuit']}));
-    } catch (error) {
-        next(error);
-    }
-}));
+const { getCuit, postCuits, postAddOrUpdate } = buildHandlers({controller});
 
-server.post('/', asyncHandler(async (request, response, next) => {
-    try {
-        response.status(200).send(await controller.get({key: request.header("Authorization"), parameters: request.body}));
-    } catch (error) {
-        next(error);
-    }
-}));
+server.get('/:cuit', getCuit);
 
-server.post('/addorupdate', asyncHandler(async (request, response, next) => {
-    try {
-        await controller.addOrUpdate({key: request.header("Authorization"), parameters: request.body});
-        response.status(200).end();
-    } catch (error) {
-        next(error);
-    }
-}));
+server.post('/', postCuits);
+
+server.post('/addorupdate', postAddOrUpdate);
 
 server.use((error, request, response, next) => {
     console.log(error);
