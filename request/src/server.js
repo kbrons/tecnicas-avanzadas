@@ -3,7 +3,6 @@ const RequestService = require('./service');
 const RequestController = require('./controller');
 const express = require('express');
 const asyncHandler = require('express-async-handler');
-const mapRequest = require('common/src/mapRequest');
 
 const envParams = {
     host: process.env.DB_HOST,
@@ -28,7 +27,7 @@ server.use(express.json());
 
 server.get('/:key', asyncHandler(async (request, response, next) => {
     try {
-		const result = await controller.getCountForLastInterval(mapRequest(request));
+		const result = await controller.getCountForLastInterval({key: request.header('Authorization'), parameters: request.params});
         response.status(200).send(JSON.stringify(result));
     } catch (error) {
         next(error);
@@ -37,7 +36,7 @@ server.get('/:key', asyncHandler(async (request, response, next) => {
 
 server.put('/:key', asyncHandler(async (request, response, next) => {
     try {
-		await controller.recordRequest(mapRequest(request));
+		await controller.recordRequest({key: request.header('Authorization'), parameters: request.params});
         response.status(200).end();
     } catch (error) {
         next(error);
