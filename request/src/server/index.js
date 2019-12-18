@@ -23,7 +23,7 @@ module.exports = () => {
 	const service = new RequestService({ repository, interval: parseInt(envParams.interval) });
 	const controller = new RequestController({ service, secretKey: envParams.secretKey });
 
-	const { getKey, putKey } = buildHandlers(controller);
+	const { getKey, putKey } = buildHandlers({controller});
 
 	const server = express();
 

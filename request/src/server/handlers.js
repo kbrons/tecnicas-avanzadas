@@ -1,6 +1,10 @@
 const asyncHandler = require('express-async-handler');
 
-const buildHandlers = (controller) => {
+const buildHandlers = ({controller}) => {
+	if (!controller) {
+		throw new Error('The controller is required');
+	}
+
 	const getKey = asyncHandler(async (request, response, next) => {
 		try {
 			const result = await controller.getCountForLastInterval({key: request.header('Authorization'), parameters: request.params});
